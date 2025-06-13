@@ -1,0 +1,139 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Clínicas</h1>
+    <div class="col-md-6 col-lg-8 text-md-end mt-2 mt-md-0">
+      <a routerLink="/clinicas/nova" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-2"></i>Nova Clínica
+      </a>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-lg-12 position-relative">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Pesquisar por nome ou razão social..."
+        [formControl]="searchControl"
+      />
+      <button
+        *ngIf="searchControl.value"
+        type="button"
+        class="btn btn-link position-absolute top-50 end-0 translate-middle-y me-3 p-0"
+        style="z-index: 2"
+        (click)="searchControl.setValue('')"
+        aria-label="Limpar pesquisa"
+      >
+        <i class="bi bi-x fs-5 text-danger"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Razão Social</th>
+                <th scope="col">Nome Fantasia</th>
+                <th scope="col">CNPJ</th>
+                <th scope="col">Ativa</th>
+                <th scope="col" class="text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let clinic of clinics">
+                <td>{{ clinic.razao_social }}</td>
+                <td>{{ clinic.nome_fantasia }}</td>
+                <td>{{ clinic.cnpj }}</td>
+                <td>
+                  <span *ngIf="clinic.ativa === 1" class="badge text-bg-success"
+                    >Sim</span
+                  >
+                  <span *ngIf="clinic.ativa === 0" class="badge text-bg-danger"
+                    >Não</span
+                  >
+                </td>
+                <td class="text-center">
+                  <a
+                    [routerLink]="['/clinicas', clinic.id]"
+                    class="btn btn-sm btn-link me-2"
+                    title="Visualizar"
+                  >
+                    <i class="bi bi-eye-fill"></i>
+                  </a>
+                  <a
+                    [routerLink]="['/clinicas', clinic.id, 'editar']"
+                    class="btn btn-sm btn-link"
+                    title="Editar"
+                  >
+                    <i class="bi bi-pencil-fill"></i>
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="clinics?.length === 0" class="text-center my-5">
+          <div class="alert alert-info" role="alert">
+            Nenhuma clínica encontrada.
+          </div>
+        </div>
+        <nav
+          *ngIf="paginationData && paginationData.last_page > 1"
+          aria-label="Navegação de páginas"
+        >
+          <ul class="pagination pagination-sm justify-content-center">
+            <li
+              class="page-item"
+              [class.disabled]="paginationData.current_page === 1"
+            >
+              <a
+                class="page-link"
+                href="javascript:void(0)"
+                (click)="goToPreviousPage()"
+                >Anterior</a
+              >
+            </li>
+
+            <li
+              *ngFor="let page of pages"
+              class="page-item"
+              [class.active]="page === paginationData.current_page"
+            >
+              <a
+                class="page-link"
+                href="javascript:void(0)"
+                (click)="onPageChange(page)"
+                >{{ page }}</a
+              >
+            </li>
+
+            <li
+              class="page-item"
+              [class.disabled]="
+                paginationData.current_page === paginationData.last_page
+              "
+            >
+              <a
+                class="page-link"
+                href="javascript:void(0)"
+                (click)="goToNextPage()"
+                >Próxima</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

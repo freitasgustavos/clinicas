@@ -1,0 +1,10 @@
+<div
+  class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3"
+>
+  <app-toast
+    *ngFor="let toast of toasts$ | async"
+    [toast]="toast"
+    (close)="removeToast(toast.id)"
+  >
+  </app-toast>
+</div>

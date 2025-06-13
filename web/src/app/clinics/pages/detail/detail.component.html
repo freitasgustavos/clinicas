@@ -1,0 +1,153 @@
+<div
+  *ngIf="clinic$ | async as clinic; else loadingTemplate"
+  class="container-fluid"
+>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Detalhes da Clínica</h1>
+    <a
+      [routerLink]="['/clinicas', clinic.id, 'editar']"
+      class="btn btn-primary btn-sm"
+    >
+      <i class="bi bi-pencil-fill me-2"></i>Editar
+    </a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">
+        {{ clinic.nome_fantasia }}
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <dl class="row">
+            <dt class="col-sm-4">Razão Social:</dt>
+            <dd class="col-sm-8">{{ clinic.razao_social }}</dd>
+
+            <dt class="col-sm-4">CNPJ:</dt>
+            <dd class="col-sm-8">{{ clinic.cnpj }}</dd>
+
+            <dt class="col-sm-4">Regional:</dt>
+            <dd class="col-sm-8">
+              {{ clinic.regional?.label || "Não informado" }}
+            </dd>
+          </dl>
+        </div>
+        <div class="col-md-6">
+          <dl class="row">
+            <dt class="col-sm-5">Data de Inauguração:</dt>
+            <dd class="col-sm-7">
+              {{ clinic.data_inauguracao | date : "dd/MM/yyyy" }}
+            </dd>
+
+            <dt class="col-sm-5">Status:</dt>
+            <dd class="col-sm-7">
+              <span
+                class="badge"
+                [ngClass]="clinic.ativa ? 'bg-success' : 'bg-danger'"
+              >
+                {{ clinic.ativa ? "Ativa" : "Inativa" }}
+              </span>
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      <hr />
+
+      <h5>Especialidades Atendidas</h5>
+      <div *ngIf="clinic.specialties.length < 5">
+        <span
+          *ngFor="let specialty of clinic.specialties; let last = last"
+          class="badge bg-secondary me-1"
+          >{{ specialty.label }}{{ !last ? "" : "" }}</span
+        >
+      </div>
+      <div *ngIf="clinic.specialties.length >= 5">
+        <span
+          *ngFor="let specialty of clinic.specialties.slice(0, 4)"
+          class="badge bg-secondary me-1"
+          >{{ specialty.label }}</span
+        >
+        <button
+          type="button"
+          class="btn btn-link btn-sm p-0 align-baseline"
+          (click)="openSpecialtiesModal()"
+        >
+          Ver todas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end mt-4">
+    <a routerLink="/clinicas" class="btn btn-secondary btn-sm">
+      <i class="bi bi-arrow-left"></i>
+      Voltar
+    </a>
+  </div>
+</div>
+
+<div
+  class="modal fade show"
+  tabindex="-1"
+  [ngStyle]="{
+    display: showSpecialtiesModal ? 'block' : 'none',
+    background: 'rgba(0,0,0,0.5)'
+  }"
+  *ngIf="showSpecialtiesModal"
+  style="z-index: 1050"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Todas as especialidades</h5>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="closeSpecialtiesModal()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <ng-container *ngIf="clinic$ | async as clinic; else loadingModal">
+          <span
+            *ngFor="let specialty of clinic.specialties"
+            class="badge bg-secondary me-1 mb-1"
+            >{{ specialty.label }}</span
+          >
+        </ng-container>
+        <ng-template #loadingModal>
+          <div class="d-flex justify-content-center my-3">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Carregando especialidades...</span>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          (click)="closeSpecialtiesModal()"
+        >
+          <i class="bi bi-x-lg"></i>
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="d-flex justify-content-center my-5">
+    <div
+      class="spinner-border text-primary"
+      style="width: 2rem; height: 2rem"
+      role="status"
+    >
+      <span class="visually-hidden">Carregando dados da clínica...</span>
+    </div>
+  </div>
+</ng-template>

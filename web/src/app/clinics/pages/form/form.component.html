@@ -1,0 +1,212 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+      {{ isEditMode ? "Editar Clínica" : "Nova Clínica" }}
+    </h1>
+    <button
+      *ngIf="isEditMode"
+      type="button"
+      class="btn btn-danger btn-sm"
+      [disabled]="isSubmitting"
+      (click)="onDelete()"
+    >
+      <span
+        *ngIf="isSubmitting"
+        class="spinner-border spinner-border-sm me-2"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      <i *ngIf="!isSubmitting" class="bi bi-trash-fill me-2"></i>
+      Excluir
+    </button>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+        <div
+          class="spinner-border text-primary"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+      </div>
+
+      <form *ngIf="!isLoading" [formGroup]="clinicForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="razao_social" class="form-label">Razão Social</label>
+            <input
+              type="text"
+              id="razao_social"
+              class="form-control"
+              formControlName="razao_social"
+              [ngClass]="{ 'is-invalid': submitted && razao_social?.invalid }"
+            />
+
+            <div
+              *ngIf="submitted && razao_social?.invalid"
+              class="invalid-feedback"
+            >
+              <div *ngIf="razao_social?.hasError('required')">
+                Este campo é obrigatório.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="nome_fantasia" class="form-label">Nome Fantasia</label>
+            <input
+              type="text"
+              id="nome_fantasia"
+              class="form-control"
+              formControlName="nome_fantasia"
+              [ngClass]="{ 'is-invalid': submitted && nome_fantasia?.invalid }"
+            />
+            <div
+              *ngIf="submitted && nome_fantasia?.invalid"
+              class="invalid-feedback"
+            >
+              <div *ngIf="nome_fantasia?.hasError('required')">
+                Este campo é obrigatório.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="cnpj" class="form-label">CNPJ</label>
+            <input
+              type="text"
+              id="cnpj"
+              class="form-control"
+              formControlName="cnpj"
+              [ngClass]="{ 'is-invalid': submitted && cnpj?.invalid }"
+            />
+            <div *ngIf="submitted && cnpj?.invalid" class="invalid-feedback">
+              <div *ngIf="cnpj?.hasError('required')">
+                Este campo é obrigatório.
+              </div>
+              <div *ngIf="cnpj?.hasError('pattern')">
+                CNPJ inválido. Use o formato 00.000.000/0000-00.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="data_inauguracao" class="form-label"
+              >Data de Inauguração</label
+            >
+            <input
+              type="date"
+              id="data_inauguracao"
+              class="form-control"
+              formControlName="data_inauguracao"
+              [ngClass]="{
+                'is-invalid': submitted && data_inauguracao?.invalid
+              }"
+            />
+            <div
+              *ngIf="submitted && data_inauguracao?.invalid"
+              class="invalid-feedback"
+            >
+              <div *ngIf="data_inauguracao?.hasError('required')">
+                Este campo é obrigatório.
+              </div>
+              <div *ngIf="data_inauguracao?.hasError('matDatepickerParse')">
+                Data inválida.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="regional_id" class="form-label">Regional</label>
+            <select
+              id="regional_id"
+              class="form-select"
+              formControlName="regional_id"
+              [ngClass]="{ 'is-invalid': submitted && regional_id?.invalid }"
+            >
+              <option [ngValue]="null" disabled>Selecione uma regional</option>
+              <option *ngFor="let regional of regionals" [value]="regional.id">
+                {{ regional.label }}
+              </option>
+            </select>
+            <div
+              *ngIf="submitted && regional_id?.invalid"
+              class="invalid-feedback"
+            >
+              <div *ngIf="regional_id?.hasError('required')">
+                Este campo é obrigatório.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 mt-4">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="ativa"
+                formControlName="ativa"
+              />
+              <label class="form-check-label" for="ativa">
+                Clínica Ativa
+              </label>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <label for="specialties" class="form-label"
+              >Especialidades Atendidas</label
+            >
+            <select
+              id="specialties"
+              class="form-select"
+              formControlName="specialties"
+              multiple
+              size="8"
+              [ngClass]="{ 'is-invalid': submitted && specialty?.invalid }"
+            >
+              <option
+                *ngFor="let specialty of specialties"
+                [value]="specialty.id"
+              >
+                {{ specialty.label }}
+              </option>
+            </select>
+            <div
+              *ngIf="submitted && specialty?.invalid"
+              class="invalid-feedback"
+            >
+              <div *ngIf="specialty?.hasError('required')">
+                Pelo menos uma especialidade deve ser selecionada.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+          <a routerLink="/clinicas" class="btn btn-secondary btn-sm">
+            <i class="bi bi-x-lg me-1"></i>
+            Cancelar
+          </a>
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm ms-2"
+            [disabled]="isSubmitting"
+          >
+            <span
+              *ngIf="isSubmitting"
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            <i *ngIf="!isSubmitting" class="bi bi-pencil-fill me-2"></i>
+            <span>{{ isEditMode ? "Editar" : "Salvar" }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
