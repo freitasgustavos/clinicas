@@ -54,10 +54,10 @@ class AuthController extends Controller
                 $ttl,         // Tempo de vida em minutos
                 '/',          // Path
                 null,         // Domain
-                false,        // Secure (só enviar em HTTPS - true em produção)
+                true,        // Secure (só enviar em HTTPS - true em produção)
                 true,         // HttpOnly (não acessível por JS)
                 false,        // Raw
-                'Lax'         // SameSite
+                'None'         // SameSite
             );
     }
 }
